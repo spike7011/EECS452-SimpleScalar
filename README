@@ -1,0 +1,1 @@
+SimpleScalar has a variety of simulation tools - in this project we will only be making use of sim-safe.c. For those who want to try a cycle-accurate simulator, we will make use of sim-outorder.c. Sim-safe is a functional simulator - similar to Shade or Atom for those familiar with those tools - but it is not instrumenting a binary, it is an actual execution- driven simulation.

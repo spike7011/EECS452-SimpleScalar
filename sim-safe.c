@@ -394,6 +394,14 @@ sim_main(void)
 	  if (MD_OP_FLAGS(op) & F_STORE)
 	    is_write = TRUE;
 	}
+	
+	if(MD_OP_FLAGS(op) & F_COND){
+		sim_num_branch++;
+		sim_num_condbranch++;
+	}
+	else if(MD_OP_FLAGS(op) & F_UNCOND){
+		sim_num_branch++;
+	}
 
       /* check for DLite debugger entry condition */
       if (dlite_check_break(regs.regs_NPC,

@@ -129,6 +129,12 @@ static struct mem_t *mem = NULL;
 /* track number of refs */
 static counter_t sim_num_refs = 0;
 
+/* track number of branch */
+static counter_t sim_num_branch = 0;
+
+/* track number of condbranch */
+static counter_t sim_num_condbranch = 0;
+
 /* maximum number of inst's to execute */
 static unsigned int max_insts;
 

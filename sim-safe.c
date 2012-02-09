@@ -182,10 +182,10 @@ sim_reg_stats(struct stat_sdb_t *sdb)
 		   "sim_num_insn / sim_elapsed_time", NULL);
 		
   stat_reg_counter(sdb, "sim_num_condbranch",
-		   "total number of conditional branches executed",
+		   "total number of conditional branches",
 		   &sim_num_condbranch, sim_num_condbranch, NULL);
   stat_reg_counter(sdb, "sim_num_branch",
-		   "total number of braches executed",
+		   "total number of braches",
 		   &sim_num_branch, sim_num_branch, NULL);
 		
   ld_reg_stats(sdb);

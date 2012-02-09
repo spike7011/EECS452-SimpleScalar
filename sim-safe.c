@@ -180,6 +180,14 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   stat_reg_formula(sdb, "sim_inst_rate",
 		   "simulation speed (in insts/sec)",
 		   "sim_num_insn / sim_elapsed_time", NULL);
+		
+  stat_reg_counter(sdb, "sim_num_condbranch",
+		   "total number of conditional branches executed",
+		   &sim_num_condbranch, sim_num_condbranch, NULL);
+  stat_reg_counter(sdb, "sim_num_branch",
+		   "total number of braches executed",
+		   &sim_num_branch, sim_num_branch, NULL);
+		
   ld_reg_stats(sdb);
   mem_reg_stats(mem, sdb);
 }

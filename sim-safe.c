@@ -591,14 +591,6 @@ sim_main(void)
 	  if (MD_OP_FLAGS(op) & F_STORE)
 	    is_write = TRUE;
 	}
-	
-	if(MD_OP_FLAGS(op) & F_COND){
-		sim_num_branches++;
-		sim_num_condbranches++;
-	}
-	else if(MD_OP_FLAGS(op) & F_UNCOND){
-		sim_num_branches++;
-	}
 
 	if (MD_OP_FLAGS(op) & F_CTRL)
 	{

@@ -376,6 +376,20 @@ sim_init(void)
   mem_init(mem);
 }
 
+/* local machine state accessor */
+static char *					/* err str, NULL for no err */
+bpred_mstate_obj(FILE *stream,			/* output stream */
+		 char *cmd,			/* optional command string */
+		 struct regs_t *regs,		/* register to access */
+		 struct mem_t *mem)		/* memory to access */
+{
+  /* just dump intermediate stats */
+  sim_print_stats(stream);
+
+  /* no error */
+  return NULL;
+}
+
 /* load program into simulated state */
 void
 sim_load_prog(char *fname,		/* program to load */

@@ -230,6 +230,41 @@ sim_reg_stats(struct stat_sdb_t *sdb)
 		
   ld_reg_stats(sdb);
   mem_reg_stats(mem, sdb);
+
+  opt_reg_string(odb, "-bpred",
+		 "branch predictor type {nottaken|taken|bimod|2lev|comb}",
+                 &pred_type, /* default */"bimod",
+                 /* print */TRUE, /* format */NULL);
+
+  opt_reg_int_list(odb, "-bpred:bimod",
+		   "bimodal predictor config (<table size>)",
+		   bimod_config, bimod_nelt, &bimod_nelt,
+		   /* default */bimod_config,
+		   /* print */TRUE, /* format */NULL, /* !accrue */FALSE);
+
+  opt_reg_int_list(odb, "-bpred:2lev",
+                   "2-level predictor config "
+		   "(<l1size> <l2size> <hist_size> <xor>)",
+                   twolev_config, twolev_nelt, &twolev_nelt,
+		   /* default */twolev_config,
+                   /* print */TRUE, /* format */NULL, /* !accrue */FALSE);
+
+  opt_reg_int_list(odb, "-bpred:comb",
+		   "combining predictor config (<meta_table_size>)",
+		   comb_config, comb_nelt, &comb_nelt,
+		   /* default */comb_config,
+		   /* print */TRUE, /* format */NULL, /* !accrue */FALSE);
+
+  opt_reg_int(odb, "-bpred:ras",
+              "return address stack size (0 for no return stack)",
+              &ras_size, /* default */ras_size,
+              /* print */TRUE, /* format */NULL);
+
+  opt_reg_int_list(odb, "-bpred:btb",
+		   "BTB config (<num_sets> <associativity>)",
+		   btb_config, btb_nelt, &btb_nelt,
+		   /* default */btb_config,
+		   /* print */TRUE, /* format */NULL, /* !accrue */FALSE);
 }
 
 /* initialize the simulator */

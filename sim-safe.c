@@ -353,6 +353,13 @@ sim_reg_stats(struct stat_sdb_t *sdb)
 		
   ld_reg_stats(sdb);
   mem_reg_stats(mem, sdb);
+
+  stat_reg_formula(sdb, "sim_IPB",
+                   "instruction per branch",
+                   "sim_num_insn / sim_num_branches", /* format */NULL);
+/* register predictor stats */
+if (pred)
+  bpred_reg_stats(pred, sdb);
 }
 
 /* initialize the simulator */

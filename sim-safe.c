@@ -168,9 +168,6 @@ static int btb_config[2] =
 /* branch predictor */
 static struct bpred_t *pred;
 
-/* track number of insn and refs */
-static counter_t sim_num_refs = 0;
-
 
 /* register simulator-specific options */
 void
@@ -217,17 +214,17 @@ sim_reg_stats(struct stat_sdb_t *sdb)
 		
   stat_reg_counter(sdb, "sim_num_condbranches",
 		   "total number of conditional branches",
-		   &sim_num_condbranch, sim_num_condbranches, NULL);
+		   &sim_num_condbranches, sim_num_condbranches, NULL);
   stat_reg_counter(sdb, "sim_num_branches",
 		   "total number of braches",
-		   &sim_num_branch, sim_num_branches, NULL);
+		   &sim_num_branches, sim_num_branches, NULL);
 
   char buf[512], buf1[512];		
-  sprintf(buf, "inst_branch_rate");
+  sprintf(buf, "inst_branches_rate");
   sprintf(buf1, "sim_num_branches / sim_num_insn");
   stat_reg_formula(sdb, buf, "The percent of instructions that are branches", buf1, NULL);
 
-  sprintf(buf, "inst_condbranch_rate");
+  sprintf(buf, "inst_condbranches_rate");
   sprintf(buf1, "sim_num_condbranches / sim_num_branches");
   stat_reg_formula(sdb, buf, "The percent of branches that are conditional branches", buf1, NULL);
 		

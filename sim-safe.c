@@ -514,9 +514,10 @@ void
 sim_main(void)
 {
   md_inst_t inst;
-  register md_addr_t addr;
+  register md_addr_t addr, target_PC;
   enum md_opcode op;
   register int is_write;
+  int stack_idx;
   enum md_fault_type fault;
 
   fprintf(stderr, "sim: ** starting functional simulation **\n");
@@ -597,6 +598,48 @@ sim_main(void)
 	}
 	else if(MD_OP_FLAGS(op) & F_UNCOND){
 		sim_num_branches++;
+	}
+
+	if (MD_OP_FLAGS(op) & F_CTRL)
+	{
+	  md_addr_t pred_PC;
+	  struct bpred_update_t update_rec;
+
+	  sim_num_branches++;
+		if(MD_OP_FLAGS(op) & F_COND){
+			sim_num_condbranches++;
+		}
+
+	  if (pred)
+	    {
+	      /* get the next predicted fetch address */
+	      pred_PC = bpred_lookup(pred,
+				     /* branch addr */regs.regs_PC,
+				     /* target */target_PC,
+				     /* inst opcode */op,
+				     /* call? */MD_IS_CALL(op),
+				     /* return? */MD_IS_RETURN(op),
+				     /* stash an update ptr */&update_rec,
+				     /* stash return stack ptr */&stack_idx);
+
+	      /* valid address returned from branch predictor? */
+	      if (!pred_PC)
+		{
+		  /* no predicted taken target, attempt not taken target */
+		  pred_PC = regs.regs_PC + sizeof(md_inst_t);
+		}
+
+	      bpred_update(pred,
+			   /* branch addr */regs.regs_PC,
+			   /* resolved branch target */regs.regs_NPC,
+			   /* taken? */regs.regs_NPC != (regs.regs_PC +
+							 sizeof(md_inst_t)),
+			   /* pred taken? */pred_PC != (regs.regs_PC +
+							sizeof(md_inst_t)),
+			   /* correct pred? */pred_PC == regs.regs_NPC,
+			   /* opcode */op,
+			   /* predictor update pointer */&update_rec);
+	    }
 	}
 
       /* check for DLite debugger entry condition */

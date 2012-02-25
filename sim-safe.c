@@ -111,6 +111,7 @@
 #include "dlite.h"
 #include "options.h"
 #include "stats.h"
+#include "bpred.h"
 #include "sim.h"
 
 /*
@@ -129,14 +130,47 @@ static struct mem_t *mem = NULL;
 /* track number of refs */
 static counter_t sim_num_refs = 0;
 
-/* track number of branch */
-static counter_t sim_num_branch = 0;
+/* track number of branches */
+static counter_t sim_num_branches = 0;
 
-/* track number of condbranch */
-static counter_t sim_num_condbranch = 0;
+/* track number of condbranches */
+static counter_t sim_num_condbranches = 0;
 
 /* maximum number of inst's to execute */
 static unsigned int max_insts;
+
+/* branch predictor type {nottaken|taken|perfect|bimod|2lev} */
+static char *pred_type;
+
+/* bimodal predictor config (<table_size>) */
+static int bimod_nelt = 1;
+static int bimod_config[1] =
+  { /* bimod tbl size */2048 };
+
+/* 2-level predictor config (<l1size> <l2size> <hist_size> <xor>) */
+static int twolev_nelt = 4;
+static int twolev_config[4] =
+  { /* l1size */1, /* l2size */1024, /* hist */8, /* xor */FALSE};
+
+/* combining predictor config (<meta_table_size> */
+static int comb_nelt = 1;
+static int comb_config[1] =
+  { /* meta_table_size */1024 };
+
+/* return address stack (RAS) size */
+static int ras_size = 8;
+
+/* BTB predictor config (<num_sets> <associativity>) */
+static int btb_nelt = 2;
+static int btb_config[2] =
+  { /* nsets */512, /* assoc */4 };
+
+/* branch predictor */
+static struct bpred_t *pred;
+
+/* track number of insn and refs */
+static counter_t sim_num_refs = 0;
+
 
 /* register simulator-specific options */
 void
@@ -181,20 +215,20 @@ sim_reg_stats(struct stat_sdb_t *sdb)
 		   "simulation speed (in insts/sec)",
 		   "sim_num_insn / sim_elapsed_time", NULL);
 		
-  stat_reg_counter(sdb, "sim_num_condbranch",
+  stat_reg_counter(sdb, "sim_num_condbranches",
 		   "total number of conditional branches",
-		   &sim_num_condbranch, sim_num_condbranch, NULL);
-  stat_reg_counter(sdb, "sim_num_branch",
+		   &sim_num_condbranch, sim_num_condbranches, NULL);
+  stat_reg_counter(sdb, "sim_num_branches",
 		   "total number of braches",
-		   &sim_num_branch, sim_num_branch, NULL);
+		   &sim_num_branch, sim_num_branches, NULL);
 
   char buf[512], buf1[512];		
   sprintf(buf, "inst_branch_rate");
-  sprintf(buf1, "sim_num_branch / sim_num_insn");
+  sprintf(buf1, "sim_num_branches / sim_num_insn");
   stat_reg_formula(sdb, buf, "The percent of instructions that are branches", buf1, NULL);
 
   sprintf(buf, "inst_condbranch_rate");
-  sprintf(buf1, "sim_num_condbranch / sim_num_branch");
+  sprintf(buf1, "sim_num_condbranches / sim_num_branches");
   stat_reg_formula(sdb, buf, "The percent of branches that are conditional branches", buf1, NULL);
 		
   ld_reg_stats(sdb);
@@ -413,11 +447,11 @@ sim_main(void)
 	}
 	
 	if(MD_OP_FLAGS(op) & F_COND){
-		sim_num_branch++;
-		sim_num_condbranch++;
+		sim_num_branches++;
+		sim_num_condbranches++;
 	}
 	else if(MD_OP_FLAGS(op) & F_UNCOND){
-		sim_num_branch++;
+		sim_num_branches++;
 	}
 
       /* check for DLite debugger entry condition */

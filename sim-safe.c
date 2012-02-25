@@ -181,11 +181,62 @@ sim_reg_options(struct opt_odb_t *odb)
 "rather than speed.\n"
 		 );
 
+  /* branch predictor options */
+  opt_reg_note(odb,
+"  Branch predictor configuration examples for 2-level predictor:\n"
+"    Configurations:   N, M, W, X\n"
+"      N   # entries in first level (# of shift register(s))\n"
+"      W   width of shift register(s)\n"
+"      M   # entries in 2nd level (# of counters, or other FSM)\n"
+"      X   (yes-1/no-0) xor history and address for 2nd level index\n"
+"    Sample predictors:\n"
+"      GAg     : 1, W, 2^W, 0\n"
+"      GAp     : 1, W, M (M > 2^W), 0\n"
+"      PAg     : N, W, 2^W, 0\n"
+"      PAp     : N, W, M (M == 2^(N+W)), 0\n"
+"      gshare  : 1, W, 2^W, 1\n"
+"  Predictor `comb' combines a bimodal and a 2-level predictor.\n"
+               );
+
   /* instruction limit */
   opt_reg_uint(odb, "-max:inst", "maximum number of inst's to execute",
 	       &max_insts, /* default */0,
 	       /* print */TRUE, /* format */NULL);
+ 
+  opt_reg_string(odb, "-bpred",
+		 "branch predictor type {nottaken|taken|bimod|2lev|comb}",
+                 &pred_type, /* default */"bimod",
+                 /* print */TRUE, /* format */NULL);
 
+  opt_reg_int_list(odb, "-bpred:bimod",
+		   "bimodal predictor config (<table size>)",
+		   bimod_config, bimod_nelt, &bimod_nelt,
+		   /* default */bimod_config,
+		   /* print */TRUE, /* format */NULL, /* !accrue */FALSE);
+
+  opt_reg_int_list(odb, "-bpred:2lev",
+                   "2-level predictor config "
+		   "(<l1size> <l2size> <hist_size> <xor>)",
+                   twolev_config, twolev_nelt, &twolev_nelt,
+		   /* default */twolev_config,
+                   /* print */TRUE, /* format */NULL, /* !accrue */FALSE);
+
+  opt_reg_int_list(odb, "-bpred:comb",
+		   "combining predictor config (<meta_table_size>)",
+		   comb_config, comb_nelt, &comb_nelt,
+		   /* default */comb_config,
+		   /* print */TRUE, /* format */NULL, /* !accrue */FALSE);
+
+  opt_reg_int(odb, "-bpred:ras",
+              "return address stack size (0 for no return stack)",
+              &ras_size, /* default */ras_size,
+              /* print */TRUE, /* format */NULL);
+
+  opt_reg_int_list(odb, "-bpred:btb",
+		   "BTB config (<num_sets> <associativity>)",
+		   btb_config, btb_nelt, &btb_nelt,
+		   /* default */btb_config,
+		   /* print */TRUE, /* format */NULL, /* !accrue */FALSE);
 }
 
 /* check simulator-specific option values */

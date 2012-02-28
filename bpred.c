@@ -448,14 +448,18 @@ bpred_reg_stats(struct bpred_t *pred,	/* branch predictor instance */
 
   sprintf(buf, "%s.lookups", name);
   stat_reg_counter(sdb, buf, "total number of bpred lookups",
-		   &pred->lookups, 0, NULL);/*
+		   &pred->lookups, 0, NULL);
+  /*
   sprintf(buf, "%s.updates", name);
   sprintf(buf1, "%s.dir_hits + %s.misses", name, name);
   stat_reg_formula(sdb, buf, "total number of updates", buf1, "%12.0f");
+  */
   sprintf(buf, "%s.addr_hits", name);
   stat_reg_counter(sdb, buf, "total number of address-predicted hits", 
 		   &pred->addr_hits, 0, NULL);
   sprintf(buf, "%s.dir_hits", name);
+  
+  /*
   stat_reg_counter(sdb, buf, 
 		   "total number of direction-predicted hits "
 		   "(includes addr-hits)", 

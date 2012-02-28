@@ -479,7 +479,7 @@ sim_main(void)
 		sim_num_branch++;
 	}
 
-  if (MD_OP_FLAGS(op) & F_CTRL){
+  if (MD_OP_FLAGS(op) & F_COND){
     md_addr_t pred_PC1;
     struct bpred_update_t update_rec1;
     md_addr_t pred_PC2;

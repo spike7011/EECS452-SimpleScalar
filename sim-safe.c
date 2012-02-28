@@ -168,7 +168,49 @@ sim_reg_options(struct opt_odb_t *odb)
 void
 sim_check_options(struct opt_odb_t *odb, int argc, char **argv)
 {
-  /* nada */
+  pred1 = bpred_create(BPred2Level,
+    /* bimod table size */0,
+    /* 2lev l1 size */1024,
+    /* 2lev l2 size */1,
+    /* meta table size */0,
+    /* history reg size */1,
+    /* history xor address */0,
+    /* btb sets */512,
+    /* btb assoc */4,
+    /* ret-addr stack size */8);
+
+  pred2 = bpred_create(BPred2Level,
+    /* bimod table size */0,
+    /* 2lev l1 size */1024,
+    /* 2lev l2 size */4,
+    /* meta table size */0,
+    /* history reg size */2,
+    /* history xor address */0,
+    /* btb sets */512,
+    /* btb assoc */4,
+    /* ret-addr stack size */8);
+
+  pred3a = bpred_create(BPred2Level,
+    /* bimod table size */0,
+    /* 2lev l1 size */1024,
+    /* 2lev l2 size */8,
+    /* meta table size */0,
+    /* history reg size */3,
+    /* history xor address */0,
+    /* btb sets */512,
+    /* btb assoc */4,
+    /* ret-addr stack size */8);
+
+  pred3b = bpred_create(BPred2Level,
+    /* bimod table size */0,
+    /* 2lev l1 size */1,
+    /* 2lev l2 size */8,
+    /* meta table size */0,
+    /* history reg size */3,
+    /* history xor address */0,
+    /* btb sets */512,
+    /* btb assoc */4,
+    /* ret-addr stack size */8);
 }
 
 /* register simulator-specific statistics */
@@ -206,6 +248,11 @@ sim_reg_stats(struct stat_sdb_t *sdb)
 		
   ld_reg_stats(sdb);
   mem_reg_stats(mem, sdb);
+
+  bpred_reg_stats(pred1, sdb);
+  bpred_reg_stats(pred2, sdb);
+  bpred_reg_stats(pred3a, sdb);
+  bpred_reg_stats(pred3b, sdb);
 }
 
 /* initialize the simulator */

@@ -446,9 +446,6 @@ bpred_reg_stats(struct bpred_t *pred,	/* branch predictor instance */
       panic("bogus branch predictor class");
     }
 
-
-
-  /*
   sprintf(buf, "%s.lookups", name);
   stat_reg_counter(sdb, buf, "total number of bpred lookups",
 		   &pred->lookups, 0, NULL);
@@ -533,7 +530,6 @@ bpred_reg_stats(struct bpred_t *pred,	/* branch predictor instance */
   stat_reg_formula(sdb, buf,
 		   "RAS prediction rate (i.e., RAS hits/used RAS)",
 		   buf1, "%9.4f");
-  */
 }
 
 void

@@ -254,9 +254,9 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   bpred_reg_stats(pred3a, sdb);
   bpred_reg_stats(pred3b, sdb);
 
-  sprintf(buf, "%s.lookups", name);
+  sprintf(buf, "pred1.lookups");
   stat_reg_counter(sdb, buf, "total number of bpred lookups",
-       &pred->lookups, 0, NULL);
+       &pred1->lookups, 0, NULL);
 
   sprintf(buf, "pred1.bpred_dir_rate");
   sprintf(buf1, "&pred1->dir_hits / &pred1->lookups");

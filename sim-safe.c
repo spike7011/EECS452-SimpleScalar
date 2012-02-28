@@ -396,7 +396,7 @@ sim_main(void)
   register md_addr_t addr, target_PC;
   enum md_opcode op;
   register int is_write;
-  int stack_idx;
+  int stack_idx1, stack_idx2, stack_idx3a, stack_idx3b;
   enum md_fault_type fault;
 
   fprintf(stderr, "sim: ** starting functional simulation **\n");

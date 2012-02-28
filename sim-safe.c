@@ -139,6 +139,12 @@ static counter_t sim_num_condbranch = 0;
 /* maximum number of inst's to execute */
 static unsigned int max_insts;
 
+/* branch predictor */
+static struct bpred_t *pred1;
+static struct bpred_t *pred2;
+static struct bpred_t *pred3a;
+static struct bpred_t *pred3b;
+
 /* register simulator-specific options */
 void
 sim_reg_options(struct opt_odb_t *odb)

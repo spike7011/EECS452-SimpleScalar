@@ -478,6 +478,127 @@ sim_main(void)
 		sim_num_branch++;
 	}
 
+  if (MD_OP_FLAGS(op) & F_CTRL){
+    md_addr_t pred_PC1;
+    struct bpred_update_t update_rec1;
+    md_addr_t pred_PC2;
+    struct bpred_update_t update_rec2;
+    md_addr_t pred_PC3a;
+    struct bpred_update_t update_rec3a;
+    md_addr_t pred_PC3b;
+    struct bpred_update_t update_rec3b;
+
+
+    /* get the next predicted fetch address */
+        pred_PC1 = bpred_lookup(pred1,
+             /* branch addr */regs.regs_PC,
+             /* target */target_PC,
+             /* inst opcode */op,
+             /* call? */MD_IS_CALL(op),
+             /* return? */MD_IS_RETURN(op),
+             /* stash an update ptr */&update_rec1,
+             /* stash return stack ptr */&stack_idx);
+
+    /* get the next predicted fetch address */
+        pred_PC2 = bpred_lookup(pred2,
+             /* branch addr */regs.regs_PC,
+             /* target */target_PC,
+             /* inst opcode */op,
+             /* call? */MD_IS_CALL(op),
+             /* return? */MD_IS_RETURN(op),
+             /* stash an update ptr */&update_rec2,
+             /* stash return stack ptr */&stack_idx);
+
+    /* get the next predicted fetch address */
+        pred_PC3a = bpred_lookup(pred3a,
+             /* branch addr */regs.regs_PC,
+             /* target */target_PC,
+             /* inst opcode */op,
+             /* call? */MD_IS_CALL(op),
+             /* return? */MD_IS_RETURN(op),
+             /* stash an update ptr */&update_rec3a,
+             /* stash return stack ptr */&stack_idx);
+
+    /* get the next predicted fetch address */
+        pred_PC3b = bpred_lookup(pred3b,
+             /* branch addr */regs.regs_PC,
+             /* target */target_PC,
+             /* inst opcode */op,
+             /* call? */MD_IS_CALL(op),
+             /* return? */MD_IS_RETURN(op),
+             /* stash an update ptr */&update_rec3b,
+             /* stash return stack ptr */&stack_idx);
+
+    if (!pred_PC1)
+    {
+      /* no predicted taken target, attempt not taken target */
+      pred_PC1 = regs.regs_PC + sizeof(md_inst_t);
+    }
+
+    bpred_update(pred1,
+     /* branch addr */regs.regs_PC,
+     /* resolved branch target */regs.regs_NPC,
+     /* taken? */regs.regs_NPC != (regs.regs_PC +
+           sizeof(md_inst_t)),
+     /* pred taken? */pred_PC != (regs.regs_PC +
+          sizeof(md_inst_t)),
+     /* correct pred? */pred_PC == regs.regs_NPC,
+     /* opcode */op,
+     /* predictor update pointer */&update_rec1);
+
+    if (!pred_PC2)
+    {
+      /* no predicted taken target, attempt not taken target */
+      pred_PC2 = regs.regs_PC + sizeof(md_inst_t);
+    }
+
+    bpred_update(pred2,
+     /* branch addr */regs.regs_PC,
+     /* resolved branch target */regs.regs_NPC,
+     /* taken? */regs.regs_NPC != (regs.regs_PC +
+           sizeof(md_inst_t)),
+     /* pred taken? */pred_PC != (regs.regs_PC +
+          sizeof(md_inst_t)),
+     /* correct pred? */pred_PC == regs.regs_NPC,
+     /* opcode */op,
+     /* predictor update pointer */&update_rec2);
+
+    if (!pred_PC3a)
+    {
+      /* no predicted taken target, attempt not taken target */
+      pred_PC3a = regs.regs_PC + sizeof(md_inst_t);
+    }
+
+    bpred_update(pred3a,
+     /* branch addr */regs.regs_PC,
+     /* resolved branch target */regs.regs_NPC,
+     /* taken? */regs.regs_NPC != (regs.regs_PC +
+           sizeof(md_inst_t)),
+     /* pred taken? */pred_PC != (regs.regs_PC +
+          sizeof(md_inst_t)),
+     /* correct pred? */pred_PC == regs.regs_NPC,
+     /* opcode */op,
+     /* predictor update pointer */&update_rec3a);
+
+    if (!pred_PC3b)
+    {
+      /* no predicted taken target, attempt not taken target */
+      pred_PC3b = regs.regs_PC + sizeof(md_inst_t);
+    }
+
+    bpred_update(pred3b,
+     /* branch addr */regs.regs_PC,
+     /* resolved branch target */regs.regs_NPC,
+     /* taken? */regs.regs_NPC != (regs.regs_PC +
+           sizeof(md_inst_t)),
+     /* pred taken? */pred_PC != (regs.regs_PC +
+          sizeof(md_inst_t)),
+     /* correct pred? */pred_PC == regs.regs_NPC,
+     /* opcode */op,
+     /* predictor update pointer */&update_rec3b);
+    
+  }
+
       /* check for DLite debugger entry condition */
       if (dlite_check_break(regs.regs_NPC,
 			    is_write ? ACCESS_WRITE : ACCESS_READ,

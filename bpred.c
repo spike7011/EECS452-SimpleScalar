@@ -499,15 +499,11 @@ bpred_reg_stats(struct bpred_t *pred,	/* branch predictor instance */
   stat_reg_formula(sdb, buf,
 		   "branch address-prediction rate (i.e., addr-hits/updates)",
 		   buf1, "%9.4f");
-  */
-
   sprintf(buf, "%s.bpred_dir_rate", name);
   sprintf(buf1, "%s.dir_hits / %s.lookups", name, name);
   stat_reg_formula(sdb, buf,
 		  "branch direction-prediction rate (i.e., all-hits/updates)",
 		  buf1, "%9.4f");
-  
-  /*
   sprintf(buf, "%s.bpred_jr_rate", name);
   sprintf(buf1, "%s.jr_hits / %s.jr_seen", name, name);
   stat_reg_formula(sdb, buf,

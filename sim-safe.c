@@ -253,6 +253,15 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   bpred_reg_stats(pred2, sdb);
   bpred_reg_stats(pred3a, sdb);
   bpred_reg_stats(pred3b, sdb);
+
+  sprintf(buf, "pred1.bpred_dir_rate");
+  sprintf(buf1, "pred1.dir_hits / pred1.lookups");
+  stat_reg_formula(sdb, buf,
+      "branch direction-prediction rate (i.e., all-hits/updates)",
+      buf1, "%9.4f");
+
+  ld_reg_stats(sdb);
+  mem_reg_stats(mem, sdb);
 }
 
 /* initialize the simulator */

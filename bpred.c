@@ -448,7 +448,7 @@ bpred_reg_stats(struct bpred_t *pred,	/* branch predictor instance */
 
   sprintf(buf, "%s.lookups", name);
   stat_reg_counter(sdb, buf, "total number of bpred lookups",
-		   &pred->lookups, 0, NULL);
+		   &pred->lookups, 0, NULL);/*
   sprintf(buf, "%s.updates", name);
   sprintf(buf1, "%s.dir_hits + %s.misses", name, name);
   stat_reg_formula(sdb, buf, "total number of updates", buf1, "%12.0f");
@@ -530,6 +530,7 @@ bpred_reg_stats(struct bpred_t *pred,	/* branch predictor instance */
   stat_reg_formula(sdb, buf,
 		   "RAS prediction rate (i.e., RAS hits/used RAS)",
 		   buf1, "%9.4f");
+  */
 }
 
 void

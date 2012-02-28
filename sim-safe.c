@@ -111,7 +111,6 @@
 #include "dlite.h"
 #include "options.h"
 #include "stats.h"
-#include "bpred.h"
 #include "sim.h"
 
 /*
@@ -130,44 +129,14 @@ static struct mem_t *mem = NULL;
 /* track number of refs */
 static counter_t sim_num_refs = 0;
 
-/* track number of branches */
-static counter_t sim_num_branches = 0;
+/* track number of branch */
+static counter_t sim_num_branch = 0;
 
-/* track number of condbranches */
-static counter_t sim_num_condbranches = 0;
+/* track number of condbranch */
+static counter_t sim_num_condbranch = 0;
 
 /* maximum number of inst's to execute */
 static unsigned int max_insts;
-
-/* branch predictor type {nottaken|taken|perfect|bimod|2lev} */
-static char *pred_type;
-
-/* bimodal predictor config (<table_size>) */
-static int bimod_nelt = 1;
-static int bimod_config[1] =
-  { /* bimod tbl size */2048 };
-
-/* 2-level predictor config (<l1size> <l2size> <hist_size> <xor>) */
-static int twolev_nelt = 4;
-static int twolev_config[4] =
-  { /* l1size */1, /* l2size */1024, /* hist */8, /* xor */FALSE};
-
-/* combining predictor config (<meta_table_size> */
-static int comb_nelt = 1;
-static int comb_config[1] =
-  { /* meta_table_size */1024 };
-
-/* return address stack (RAS) size */
-static int ras_size = 8;
-
-/* BTB predictor config (<num_sets> <associativity>) */
-static int btb_nelt = 2;
-static int btb_config[2] =
-  { /* nsets */512, /* assoc */4 };
-
-/* branch predictor */
-static struct bpred_t *pred;
-
 
 /* register simulator-specific options */
 void
@@ -181,141 +150,18 @@ sim_reg_options(struct opt_odb_t *odb)
 "rather than speed.\n"
 		 );
 
-  /* branch predictor options */
-  opt_reg_note(odb,
-"  Branch predictor configuration examples for 2-level predictor:\n"
-"    Configurations:   N, M, W, X\n"
-"      N   # entries in first level (# of shift register(s))\n"
-"      W   width of shift register(s)\n"
-"      M   # entries in 2nd level (# of counters, or other FSM)\n"
-"      X   (yes-1/no-0) xor history and address for 2nd level index\n"
-"    Sample predictors:\n"
-"      GAg     : 1, W, 2^W, 0\n"
-"      GAp     : 1, W, M (M > 2^W), 0\n"
-"      PAg     : N, W, 2^W, 0\n"
-"      PAp     : N, W, M (M == 2^(N+W)), 0\n"
-"      gshare  : 1, W, 2^W, 1\n"
-"  Predictor `comb' combines a bimodal and a 2-level predictor.\n"
-               );
-
   /* instruction limit */
   opt_reg_uint(odb, "-max:inst", "maximum number of inst's to execute",
 	       &max_insts, /* default */0,
 	       /* print */TRUE, /* format */NULL);
- 
-  opt_reg_string(odb, "-bpred",
-		 "branch predictor type {nottaken|taken|bimod|2lev|comb}",
-                 &pred_type, /* default */"bimod",
-                 /* print */TRUE, /* format */NULL);
 
-  opt_reg_int_list(odb, "-bpred:bimod",
-		   "bimodal predictor config (<table size>)",
-		   bimod_config, bimod_nelt, &bimod_nelt,
-		   /* default */bimod_config,
-		   /* print */TRUE, /* format */NULL, /* !accrue */FALSE);
-
-  opt_reg_int_list(odb, "-bpred:2lev",
-                   "2-level predictor config "
-		   "(<l1size> <l2size> <hist_size> <xor>)",
-                   twolev_config, twolev_nelt, &twolev_nelt,
-		   /* default */twolev_config,
-                   /* print */TRUE, /* format */NULL, /* !accrue */FALSE);
-
-  opt_reg_int_list(odb, "-bpred:comb",
-		   "combining predictor config (<meta_table_size>)",
-		   comb_config, comb_nelt, &comb_nelt,
-		   /* default */comb_config,
-		   /* print */TRUE, /* format */NULL, /* !accrue */FALSE);
-
-  opt_reg_int(odb, "-bpred:ras",
-              "return address stack size (0 for no return stack)",
-              &ras_size, /* default */ras_size,
-              /* print */TRUE, /* format */NULL);
-
-  opt_reg_int_list(odb, "-bpred:btb",
-		   "BTB config (<num_sets> <associativity>)",
-		   btb_config, btb_nelt, &btb_nelt,
-		   /* default */btb_config,
-		   /* print */TRUE, /* format */NULL, /* !accrue */FALSE);
 }
 
 /* check simulator-specific option values */
 void
 sim_check_options(struct opt_odb_t *odb, int argc, char **argv)
 {
-  if (!mystricmp(pred_type, "taken"))
-    {
-      /* static predictor, not taken */
-      pred = bpred_create(BPredTaken, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    }
-  else if (!mystricmp(pred_type, "nottaken"))
-    {
-      /* static predictor, taken */
-      pred = bpred_create(BPredNotTaken, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    }
-  else if (!mystricmp(pred_type, "bimod"))
-    {
-      if (bimod_nelt != 1)
-	fatal("bad bimod predictor config (<table_size>)");
-      if (btb_nelt != 2)
-	fatal("bad btb config (<num_sets> <associativity>)");
-
-      /* bimodal predictor, bpred_create() checks BTB_SIZE */
-      pred = bpred_create(BPred2bit,
-			  /* bimod table size */bimod_config[0],
-			  /* 2lev l1 size */0,
-			  /* 2lev l2 size */0,
-			  /* meta table size */0,
-			  /* history reg size */0,
-			  /* history xor address */0,
-			  /* btb sets */btb_config[0],
-			  /* btb assoc */btb_config[1],
-			  /* ret-addr stack size */ras_size);
-    }
-  else if (!mystricmp(pred_type, "2lev"))
-    {
-      /* 2-level adaptive predictor, bpred_create() checks args */
-      if (twolev_nelt != 4)
-	fatal("bad 2-level pred config (<l1size> <l2size> <hist_size> <xor>)");
-      if (btb_nelt != 2)
-	fatal("bad btb config (<num_sets> <associativity>)");
-
-      pred = bpred_create(BPred2Level,
-			  /* bimod table size */0,
-			  /* 2lev l1 size */twolev_config[0],
-			  /* 2lev l2 size */twolev_config[1],
-			  /* meta table size */0,
-			  /* history reg size */twolev_config[2],
-			  /* history xor address */twolev_config[3],
-			  /* btb sets */btb_config[0],
-			  /* btb assoc */btb_config[1],
-			  /* ret-addr stack size */ras_size);
-    }
-  else if (!mystricmp(pred_type, "comb"))
-    {
-      /* combining predictor, bpred_create() checks args */
-      if (twolev_nelt != 4)
-	fatal("bad 2-level pred config (<l1size> <l2size> <hist_size> <xor>)");
-      if (bimod_nelt != 1)
-	fatal("bad bimod predictor config (<table_size>)");
-      if (comb_nelt != 1)
-	fatal("bad combining predictor config (<meta_table_size>)");
-      if (btb_nelt != 2)
-	fatal("bad btb config (<num_sets> <associativity>)");
-
-      pred = bpred_create(BPredComb,
-			  /* bimod table size */bimod_config[0],
-			  /* l1 size */twolev_config[0],
-			  /* l2 size */twolev_config[1],
-			  /* meta table size */comb_config[0],
-			  /* history reg size */twolev_config[2],
-			  /* history xor address */twolev_config[3],
-			  /* btb sets */btb_config[0],
-			  /* btb assoc */btb_config[1],
-			  /* ret-addr stack size */ras_size);
-    }
-  else
-    fatal("cannot parse predictor type `%s'", pred_type);
+  /* nada */
 }
 
 /* register simulator-specific statistics */
@@ -335,31 +181,24 @@ sim_reg_stats(struct stat_sdb_t *sdb)
 		   "simulation speed (in insts/sec)",
 		   "sim_num_insn / sim_elapsed_time", NULL);
 		
-  stat_reg_counter(sdb, "sim_num_condbranches",
+  stat_reg_counter(sdb, "sim_num_condbranch",
 		   "total number of conditional branches",
-		   &sim_num_condbranches, sim_num_condbranches, NULL);
-  stat_reg_counter(sdb, "sim_num_branches",
+		   &sim_num_condbranch, sim_num_condbranch, NULL);
+  stat_reg_counter(sdb, "sim_num_branch",
 		   "total number of braches",
-		   &sim_num_branches, sim_num_branches, NULL);
+		   &sim_num_branch, sim_num_branch, NULL);
 
   char buf[512], buf1[512];		
-  sprintf(buf, "inst_branches_rate");
-  sprintf(buf1, "sim_num_branches / sim_num_insn");
+  sprintf(buf, "inst_branch_rate");
+  sprintf(buf1, "sim_num_branch / sim_num_insn");
   stat_reg_formula(sdb, buf, "The percent of instructions that are branches", buf1, NULL);
 
-  sprintf(buf, "inst_condbranches_rate");
-  sprintf(buf1, "sim_num_condbranches / sim_num_branches");
+  sprintf(buf, "inst_condbranch_rate");
+  sprintf(buf1, "sim_num_condbranch / sim_num_branch");
   stat_reg_formula(sdb, buf, "The percent of branches that are conditional branches", buf1, NULL);
 		
   ld_reg_stats(sdb);
   mem_reg_stats(mem, sdb);
-
-  stat_reg_formula(sdb, "sim_IPB",
-                   "instruction per branch",
-                   "sim_num_insn / sim_num_branches", /* format */NULL);
-/* register predictor stats */
-if (pred)
-  bpred_reg_stats(pred, sdb);
 }
 
 /* initialize the simulator */
@@ -374,20 +213,6 @@ sim_init(void)
   /* allocate and initialize memory space */
   mem = mem_create("mem");
   mem_init(mem);
-}
-
-/* local machine state accessor */
-static char *					/* err str, NULL for no err */
-bpred_mstate_obj(FILE *stream,			/* output stream */
-		 char *cmd,			/* optional command string */
-		 struct regs_t *regs,		/* register to access */
-		 struct mem_t *mem)		/* memory to access */
-{
-  /* just dump intermediate stats */
-  sim_print_stats(stream);
-
-  /* no error */
-  return NULL;
 }
 
 /* load program into simulated state */
@@ -435,10 +260,6 @@ sim_uninit(void)
 
 /* next program counter */
 #define SET_NPC(EXPR)		(regs.regs_NPC = (EXPR))
-
-/* target program counter */
-#undef  SET_TPC
-#define SET_TPC(EXPR)		(target_PC = (EXPR))
 
 /* current program counter */
 #define CPC			(regs.regs_PC)
@@ -514,10 +335,9 @@ void
 sim_main(void)
 {
   md_inst_t inst;
-  register md_addr_t addr, target_PC;
+  register md_addr_t addr;
   enum md_opcode op;
   register int is_write;
-  int stack_idx;
   enum md_fault_type fault;
 
   fprintf(stderr, "sim: ** starting functional simulation **\n");
@@ -591,47 +411,13 @@ sim_main(void)
 	  if (MD_OP_FLAGS(op) & F_STORE)
 	    is_write = TRUE;
 	}
-
-	if (MD_OP_FLAGS(op) & F_CTRL)
-	{
-	  md_addr_t pred_PC;
-	  struct bpred_update_t update_rec;
-
-	  sim_num_branches++;
-		if(MD_OP_FLAGS(op) & F_COND){
-			sim_num_condbranches++;
-		}
-
-	  if (pred)
-	    {
-	      /* get the next predicted fetch address */
-	      pred_PC = bpred_lookup(pred,
-				     /* branch addr */regs.regs_PC,
-				     /* target */target_PC,
-				     /* inst opcode */op,
-				     /* call? */MD_IS_CALL(op),
-				     /* return? */MD_IS_RETURN(op),
-				     /* stash an update ptr */&update_rec,
-				     /* stash return stack ptr */&stack_idx);
-
-	      /* valid address returned from branch predictor? */
-	      if (!pred_PC)
-		{
-		  /* no predicted taken target, attempt not taken target */
-		  pred_PC = regs.regs_PC + sizeof(md_inst_t);
-		}
-
-	      bpred_update(pred,
-			   /* branch addr */regs.regs_PC,
-			   /* resolved branch target */regs.regs_NPC,
-			   /* taken? */regs.regs_NPC != (regs.regs_PC +
-							 sizeof(md_inst_t)),
-			   /* pred taken? */pred_PC != (regs.regs_PC +
-							sizeof(md_inst_t)),
-			   /* correct pred? */pred_PC == regs.regs_NPC,
-			   /* opcode */op,
-			   /* predictor update pointer */&update_rec);
-	    }
+	
+	if(MD_OP_FLAGS(op) & F_COND){
+		sim_num_branch++;
+		sim_num_condbranch++;
+	}
+	else if(MD_OP_FLAGS(op) & F_UNCOND){
+		sim_num_branch++;
 	}
 
       /* check for DLite debugger entry condition */

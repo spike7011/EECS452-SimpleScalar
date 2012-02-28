@@ -396,6 +396,7 @@ sim_main(void)
   register md_addr_t addr, target_PC;
   enum md_opcode op;
   register int is_write;
+  int stack_idx;
   enum md_fault_type fault;
 
   fprintf(stderr, "sim: ** starting functional simulation **\n");
@@ -540,9 +541,9 @@ sim_main(void)
      /* resolved branch target */regs.regs_NPC,
      /* taken? */regs.regs_NPC != (regs.regs_PC +
            sizeof(md_inst_t)),
-     /* pred taken? */pred_PC != (regs.regs_PC +
+     /* pred taken? */pred_PC1 != (regs.regs_PC +
           sizeof(md_inst_t)),
-     /* correct pred? */pred_PC == regs.regs_NPC,
+     /* correct pred? */pred_PC1 == regs.regs_NPC,
      /* opcode */op,
      /* predictor update pointer */&update_rec1);
 
@@ -557,9 +558,9 @@ sim_main(void)
      /* resolved branch target */regs.regs_NPC,
      /* taken? */regs.regs_NPC != (regs.regs_PC +
            sizeof(md_inst_t)),
-     /* pred taken? */pred_PC != (regs.regs_PC +
+     /* pred taken? */pred_PC2 != (regs.regs_PC +
           sizeof(md_inst_t)),
-     /* correct pred? */pred_PC == regs.regs_NPC,
+     /* correct pred? */pred_PC2 == regs.regs_NPC,
      /* opcode */op,
      /* predictor update pointer */&update_rec2);
 
@@ -574,9 +575,9 @@ sim_main(void)
      /* resolved branch target */regs.regs_NPC,
      /* taken? */regs.regs_NPC != (regs.regs_PC +
            sizeof(md_inst_t)),
-     /* pred taken? */pred_PC != (regs.regs_PC +
+     /* pred taken? */pred_PC3a != (regs.regs_PC +
           sizeof(md_inst_t)),
-     /* correct pred? */pred_PC == regs.regs_NPC,
+     /* correct pred? */pred_PC3a == regs.regs_NPC,
      /* opcode */op,
      /* predictor update pointer */&update_rec3a);
 
@@ -591,9 +592,9 @@ sim_main(void)
      /* resolved branch target */regs.regs_NPC,
      /* taken? */regs.regs_NPC != (regs.regs_PC +
            sizeof(md_inst_t)),
-     /* pred taken? */pred_PC != (regs.regs_PC +
+     /* pred taken? */pred_PC3b != (regs.regs_PC +
           sizeof(md_inst_t)),
-     /* correct pred? */pred_PC == regs.regs_NPC,
+     /* correct pred? */pred_PC3b == regs.regs_NPC,
      /* opcode */op,
      /* predictor update pointer */&update_rec3b);
     

@@ -396,7 +396,7 @@ sim_main(void)
   register md_addr_t addr, target_PC;
   enum md_opcode op;
   register int is_write;
-  int stack_idx;
+  int stack_idx1, stack_idx2, stack_idx3a, stack_idx3b;
   enum md_fault_type fault;
 
   fprintf(stderr, "sim: ** starting functional simulation **\n");
@@ -498,7 +498,7 @@ sim_main(void)
              /* call? */MD_IS_CALL(op),
              /* return? */MD_IS_RETURN(op),
              /* stash an update ptr */&update_rec1,
-             /* stash return stack ptr */&stack_idx);
+             /* stash return stack ptr */&stack_idx1);
 
     /* get the next predicted fetch address */
         pred_PC2 = bpred_lookup(pred2,
@@ -508,7 +508,7 @@ sim_main(void)
              /* call? */MD_IS_CALL(op),
              /* return? */MD_IS_RETURN(op),
              /* stash an update ptr */&update_rec2,
-             /* stash return stack ptr */&stack_idx);
+             /* stash return stack ptr */&stack_idx2);
 
     /* get the next predicted fetch address */
         pred_PC3a = bpred_lookup(pred3a,
@@ -518,7 +518,7 @@ sim_main(void)
              /* call? */MD_IS_CALL(op),
              /* return? */MD_IS_RETURN(op),
              /* stash an update ptr */&update_rec3a,
-             /* stash return stack ptr */&stack_idx3);
+             /* stash return stack ptr */&stack_idx3a);
 
     /* get the next predicted fetch address */
         pred_PC3b = bpred_lookup(pred3b,
@@ -528,7 +528,7 @@ sim_main(void)
              /* call? */MD_IS_CALL(op),
              /* return? */MD_IS_RETURN(op),
              /* stash an update ptr */&update_rec3b,
-             /* stash return stack ptr */&stack_idx3);
+             /* stash return stack ptr */&stack_idx3b);
 
     if (!pred_PC1)
     {

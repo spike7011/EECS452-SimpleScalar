@@ -111,6 +111,7 @@
 #include "dlite.h"
 #include "options.h"
 #include "stats.h"
+#include "bpred.h"
 #include "sim.h"
 
 /*

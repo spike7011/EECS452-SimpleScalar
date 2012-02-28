@@ -254,65 +254,68 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   //bpred_reg_stats(pred3a, sdb);
   //bpred_reg_stats(pred3b, sdb);
 
-  sprintf(buf, "pred1.lookups", name);
+  sprintf(buf, "pred1.lookups");
   stat_reg_counter(sdb, buf, "total number of bpred lookups", &pred1->lookups, 0, NULL);
 
-  sprintf(buf, "pred1.dir_hits", name);
+  sprintf(buf, "pred1.dir_hits");
   stat_reg_counter(sdb, buf, 
        "total number of direction-predicted hits "
        "(includes addr-hits)", 
        pred1->dir_hits, 0, NULL);
   
-  sprintf(buf, "pred1.bpred_dir_rate", name);
+  sprintf(buf, "pred1.bpred_dir_rate");
   sprintf(buf1, "pred1.dir_hits / pred1.lookups");
   stat_reg_formula(sdb, buf,
       "branch direction-prediction rate (i.e., all-hits/updates)",
       buf1, "%9.4f");
 
-  sprintf(buf, "pred2.lookups", name);
+  sprintf(buf, "pred2.lookups");
   stat_reg_counter(sdb, buf, "total number of bpred lookups", &pred2->lookups, 0, NULL);
 
-  sprintf(buf, "pred2.dir_hits", name);
+  sprintf(buf, "pred2.dir_hits");
   stat_reg_counter(sdb, buf, 
        "total number of direction-predicted hits "
        "(includes addr-hits)", 
        pred2->dir_hits, 0, NULL);
   
-  sprintf(buf, "pred2.bpred_dir_rate", name);
+  sprintf(buf, "pred2.bpred_dir_rate");
   sprintf(buf1, "pred2.dir_hits / pred2.lookups");
   stat_reg_formula(sdb, buf,
       "branch direction-prediction rate (i.e., all-hits/updates)",
       buf1, "%9.4f");
 
-  sprintf(buf, "pred3a.lookups", name);
+  sprintf(buf, "pred3a.lookups");
   stat_reg_counter(sdb, buf, "total number of bpred lookups", &pred3a->lookups, 0, NULL);
 
-  sprintf(buf, "pred3a.dir_hits", name);
+  sprintf(buf, "pred3a.dir_hits");
   stat_reg_counter(sdb, buf, 
        "total number of direction-predicted hits "
        "(includes addr-hits)", 
        pred3a->dir_hits, 0, NULL);
   
-  sprintf(buf, "pred3a.bpred_dir_rate", name);
+  sprintf(buf, "pred3a.bpred_dir_rate");
   sprintf(buf1, "pred3a.dir_hits / pred3a.lookups");
   stat_reg_formula(sdb, buf,
       "branch direction-prediction rate (i.e., all-hits/updates)",
       buf1, "%9.4f");
 
-  sprintf(buf, "pred3b.lookups", name);
+  sprintf(buf, "pred3b.lookups");
   stat_reg_counter(sdb, buf, "total number of bpred lookups", &pred3b->lookups, 0, NULL);
 
-  sprintf(buf, "pred3b.dir_hits", name);
+  sprintf(buf, "pred3b.dir_hits");
   stat_reg_counter(sdb, buf, 
        "total number of direction-predicted hits "
        "(includes addr-hits)", 
        pred3b->dir_hits, 0, NULL);
   
-  sprintf(buf, "pred3b.bpred_dir_rate", name);
+  sprintf(buf, "pred3b.bpred_dir_rate");
   sprintf(buf1, "pred3b.dir_hits / pred3b.lookups");
   stat_reg_formula(sdb, buf,
       "branch direction-prediction rate (i.e., all-hits/updates)",
       buf1, "%9.4f");
+
+  ld_reg_stats(sdb);
+  mem_reg_stats(mem, sdb);
 }
 
 /* initialize the simulator */

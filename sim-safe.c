@@ -255,7 +255,7 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   //bpred_reg_stats(pred3b, sdb);
 
   sprintf(buf, "pred1.lookups");
-  stat_reg_counter(sdb, buf, "total number of bpred lookups", &pred1->lookups, 0, NULL);
+  stat_reg_counter(sdb, buf, "total number of bpred lookups", pred1->lookups, 0, NULL);
 
   sprintf(buf, "pred1.dir_hits");
   stat_reg_counter(sdb, buf, 
@@ -270,7 +270,7 @@ sim_reg_stats(struct stat_sdb_t *sdb)
       buf1, "%9.4f");
 
   sprintf(buf, "pred2.lookups");
-  stat_reg_counter(sdb, buf, "total number of bpred lookups", &pred2->lookups, 0, NULL);
+  stat_reg_counter(sdb, buf, "total number of bpred lookups", pred2->lookups, 0, NULL);
 
   sprintf(buf, "pred2.dir_hits");
   stat_reg_counter(sdb, buf, 
@@ -285,7 +285,7 @@ sim_reg_stats(struct stat_sdb_t *sdb)
       buf1, "%9.4f");
 
   sprintf(buf, "pred3a.lookups");
-  stat_reg_counter(sdb, buf, "total number of bpred lookups", &pred3a->lookups, 0, NULL);
+  stat_reg_counter(sdb, buf, "total number of bpred lookups", pred3a->lookups, 0, NULL);
 
   sprintf(buf, "pred3a.dir_hits");
   stat_reg_counter(sdb, buf, 
@@ -300,7 +300,7 @@ sim_reg_stats(struct stat_sdb_t *sdb)
       buf1, "%9.4f");
 
   sprintf(buf, "pred3b.lookups");
-  stat_reg_counter(sdb, buf, "total number of bpred lookups", &pred3b->lookups, 0, NULL);
+  stat_reg_counter(sdb, buf, "total number of bpred lookups", pred3b->lookups, 0, NULL);
 
   sprintf(buf, "pred3b.dir_hits");
   stat_reg_counter(sdb, buf, 

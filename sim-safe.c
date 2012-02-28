@@ -258,8 +258,14 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   stat_reg_counter(sdb, buf, "total number of bpred lookups",
        &pred1->lookups, 0, NULL);
 
+  sprintf(buf, "pred1.dir_hits");
+  stat_reg_counter(sdb, buf, 
+       "total number of direction-predicted hits "
+       "(includes addr-hits)", 
+       &pred1->dir_hits, 0, NULL);
+
   sprintf(buf, "pred1.bpred_dir_rate");
-  sprintf(buf1, "&pred1->dir_hits / &pred1->lookups");
+  sprintf(buf1, "pred1.dir_hits / pred1.lookups");
   stat_reg_formula(sdb, buf,
       "branch direction-prediction rate (i.e., all-hits/updates)",
       buf1, "%9.4f");

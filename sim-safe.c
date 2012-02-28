@@ -249,10 +249,10 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   //ld_reg_stats(sdb);
   //mem_reg_stats(mem, sdb);
 
-  bpred_reg_stats(pred1, sdb);
-  bpred_reg_stats(pred2, sdb);
-  bpred_reg_stats(pred3a, sdb);
-  bpred_reg_stats(pred3b, sdb);
+  //bpred_reg_stats(pred1, sdb);
+  //bpred_reg_stats(pred2, sdb);
+  //bpred_reg_stats(pred3a, sdb);
+  //bpred_reg_stats(pred3b, sdb);
 
 
   sprintf(buf, "pred1.lookups");

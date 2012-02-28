@@ -246,22 +246,26 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   sprintf(buf1, "sim_num_condbranch / sim_num_branch");
   stat_reg_formula(sdb, buf, "The percent of branches that are conditional branches", buf1, NULL);
 		
-  ld_reg_stats(sdb);
-  mem_reg_stats(mem, sdb);
+  //ld_reg_stats(sdb);
+  //mem_reg_stats(mem, sdb);
 
   bpred_reg_stats(pred1, sdb);
   bpred_reg_stats(pred2, sdb);
   bpred_reg_stats(pred3a, sdb);
   bpred_reg_stats(pred3b, sdb);
 
+  sprintf(buf, "%s.lookups", name);
+  stat_reg_counter(sdb, buf, "total number of bpred lookups",
+       &pred->lookups, 0, NULL);
+
   sprintf(buf, "pred1.bpred_dir_rate");
-  sprintf(buf1, "pred1.dir_hits / pred1.lookups");
+  sprintf(buf1, "&pred1->dir_hits / &pred1->lookups");
   stat_reg_formula(sdb, buf,
       "branch direction-prediction rate (i.e., all-hits/updates)",
       buf1, "%9.4f");
 
-  ld_reg_stats(sdb);
-  mem_reg_stats(mem, sdb);
+  //ld_reg_stats(sdb);
+  //mem_reg_stats(mem, sdb);
 }
 
 /* initialize the simulator */

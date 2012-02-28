@@ -448,20 +448,6 @@ bpred_reg_stats(struct bpred_t *pred,	/* branch predictor instance */
 
 
 
-  sprintf(buf, "%s.lookups", name);
-  stat_reg_counter(sdb, buf, "total number of bpred lookups", &pred->lookups, 0, NULL);
-
-  sprintf(buf, "%s.dir_hits", name);
-  stat_reg_counter(sdb, buf, 
-       "total number of direction-predicted hits "
-       "(includes addr-hits)", 
-       &pred->dir_hits, 0, NULL);
-  
-  sprintf(buf, "%s.bpred_dir_rate", name);
-  sprintf(buf1, "%s.dir_hits / %s.lookups", name, name);
-  stat_reg_formula(sdb, buf,
-      "branch direction-prediction rate (i.e., all-hits/updates)",
-      buf1, "%9.4f");
   /*
   sprintf(buf, "%s.lookups", name);
   stat_reg_counter(sdb, buf, "total number of bpred lookups",

@@ -658,7 +658,7 @@ sim_main(void)
           taken = bpred_dir_lookup(pred, regs.regs_PC); 
           bpred_update(pred, regs.regs_PC, 
                        (regs.regs_NPC != (regs.regs_PC + sizeof(md_inst_t))), 
-                       taken);  
+                       taken);
        }
       }
 

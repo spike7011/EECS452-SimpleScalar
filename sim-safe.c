@@ -492,11 +492,6 @@ sim_uninit(void)
 /* next program counter */
 #define SET_NPC(EXPR)		(regs.regs_NPC = (EXPR))
 
-/* target program counter */
-#undef  SET_TPC
-#define SET_TPC(EXPR)   (target_PC = (EXPR))
-
-
 /* current program counter */
 #define CPC			(regs.regs_PC)
 

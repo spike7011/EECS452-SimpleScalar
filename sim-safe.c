@@ -240,11 +240,11 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   char buf[512], buf1[512];		
   sprintf(buf, "inst_branch_rate");
   sprintf(buf1, "sim_num_branch / sim_num_insn");
-  stat_reg_formula(sdb, buf, "The percent of instructions that are branches", buf1, NULL);
+  stat_reg_formula(sdb, buf, "The \% of instructions that are branches", buf1, NULL);
 
   sprintf(buf, "inst_condbranch_rate");
   sprintf(buf1, "sim_num_condbranch / sim_num_branch");
-  stat_reg_formula(sdb, buf, "The percent of branches that are conditional branches", buf1, NULL);
+  stat_reg_formula(sdb, buf, "The \% of branches that are conditional branches", buf1, NULL);
 		
   //ld_reg_stats(sdb);
   //mem_reg_stats(mem, sdb);
@@ -261,8 +261,7 @@ sim_reg_stats(struct stat_sdb_t *sdb)
 
   sprintf(buf, "pred1.dir_hits");
   stat_reg_counter(sdb, buf, 
-       "total number of direction-predicted hits"
-       "(includes addr-hits)", 
+       "total # of direction-predicted hits", 
        &pred1->dir_hits, 0, NULL);
 
   sprintf(buf, "pred1.bpred_dir_rate");
@@ -278,8 +277,7 @@ sim_reg_stats(struct stat_sdb_t *sdb)
 
   sprintf(buf, "pred2.dir_hits");
   stat_reg_counter(sdb, buf, 
-       "total number of direction-predicted hits"
-       "(includes addr-hits)", 
+       "total # of direction-predicted hits", 
        &pred2->dir_hits, 0, NULL);
 
   sprintf(buf, "pred2.bpred_dir_rate");
@@ -295,8 +293,7 @@ sim_reg_stats(struct stat_sdb_t *sdb)
 
   sprintf(buf, "pred3a.dir_hits");
   stat_reg_counter(sdb, buf, 
-       "total number of direction-predicted hits"
-       "(includes addr-hits)", 
+       "total # of direction-predicted hits", 
        &pred3a->dir_hits, 0, NULL);
 
   sprintf(buf, "pred3a.bpred_dir_rate");
@@ -312,8 +309,7 @@ sim_reg_stats(struct stat_sdb_t *sdb)
 
   sprintf(buf, "pred3b.dir_hits");
   stat_reg_counter(sdb, buf, 
-       "total number of direction-predicted hits"
-       "(includes addr-hits)", 
+       "total # of direction-predicted hits", 
        &pred3b->dir_hits, 0, NULL);
 
   sprintf(buf, "pred3b.bpred_dir_rate");

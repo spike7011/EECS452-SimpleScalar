@@ -1,1 +1,1 @@
-sim-safe -max:inst 100000000 crafty00.peak.ev6 -pred BPred1bit < crafty.in > /dev/null
+sim-safe -max:inst 100000000 crafty00.peak.ev6 -pred BPred1bit -redir:sim crafty_1bit.txt < crafty.in > /dev/null

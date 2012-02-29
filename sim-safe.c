@@ -135,6 +135,9 @@ static counter_t sim_num_branch = 0;
 /* track number of condbranch */
 static counter_t sim_num_condbranch = 0;
 
+/* track number of bpred hit */
+static counter_t num_corr_pred = 0; 
+
 /* maximum number of inst's to execute */
 static unsigned int max_insts;
 

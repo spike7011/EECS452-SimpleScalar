@@ -138,6 +138,10 @@ static counter_t sim_num_condbranch = 0;
 /* track number of bpred hit */
 static counter_t num_corr_pred = 0; 
 
+/* define hash function */
+#define PRED_HASH(ADDR) \
+  ((((ADDR) >> 19) ^ ((ADDR) >> MD_BR_SHIFT)) & (1024-1))
+
 /* maximum number of inst's to execute */
 static unsigned int max_insts;
 

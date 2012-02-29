@@ -261,6 +261,11 @@ sim_uninit(void)
 /* next program counter */
 #define SET_NPC(EXPR)		(regs.regs_NPC = (EXPR))
 
+/* target program counter */
+#undef  SET_TPC
+#define SET_TPC(EXPR)   (target_PC = (EXPR))
+
+
 /* current program counter */
 #define CPC			(regs.regs_PC)
 
@@ -335,7 +340,7 @@ void
 sim_main(void)
 {
   md_inst_t inst;
-  register md_addr_t addr;
+  register md_addr_t addr, target_PC;
   enum md_opcode op;
   register int is_write;
   enum md_fault_type fault;

@@ -237,6 +237,44 @@ bpred_create(enum bpred_class class)
   return pred; 
 }
 
+md_addr_t *
+bpred_dir_lookup(struct bpred_t *pred, md_addr_t baddr)
+{
+  int index = 0; 
+  switch(pred->class) {
+    case BPred1bit: 
+    {
+      if(pred->table[PRED_HASH(baddr)] >= 1) return 1; /*taken*/
+      else return 0;  
+      break; 
+    }
+    case BPred2bit:
+    {
+      if(pred->table[PRED_HASH(baddr)] >= 2) return 1; /*taken*/
+      else return 0;
+      break;
+    } 
+    case BPred3GS1:
+    {
+      index = pred->hist[0]; 
+      if(pred->table[index] > 0) return 1; 
+      else return 0; 
+      break; 
+    }
+    case BPred3GS2:
+    {
+      int temp = PRED_HASH(baddr); 
+      index = pred->hist[temp]; 
+      if(pred->table[temp*8+index] > 0) return 1; 
+      else return 0; 
+      break; 
+    }
+    default:
+      panic("bogus branch predictor class"); 
+  }
+  panic("bogus branch predictor class"); 
+}
+
 /* register simulator-specific options */
 void
 sim_reg_options(struct opt_odb_t *odb)

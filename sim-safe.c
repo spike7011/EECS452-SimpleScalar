@@ -651,6 +651,17 @@ sim_main(void)
 		sim_num_branch++;
 	}
 
+  if ((MD_OP_FLAGS(op) & (F_CTRL|F_COND)) == (F_CTRL|F_COND)) {
+        unsigned int taken = 0; 
+        if(pred)
+        {
+          taken = bpred_dir_lookup(pred, regs.regs_PC); 
+          bpred_update(pred, regs.regs_PC, 
+                       (regs.regs_NPC != (regs.regs_PC + sizeof(md_inst_t))), 
+                       taken);  
+       }
+      }
+
       /* check for DLite debugger entry condition */
       if (dlite_check_break(regs.regs_NPC,
 			    is_write ? ACCESS_WRITE : ACCESS_READ,

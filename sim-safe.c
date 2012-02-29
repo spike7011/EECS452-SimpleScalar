@@ -401,11 +401,11 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   char buf[512], buf1[512];		
   sprintf(buf, "inst_branch_rate");
   sprintf(buf1, "sim_num_branch / sim_num_insn");
-  stat_reg_formula(sdb, buf, "The percent of instructions that are branches", buf1, NULL);
+  stat_reg_formula(sdb, buf, "The \% of inst. that are branches", buf1, NULL);
 
   sprintf(buf, "inst_condbranch_rate");
   sprintf(buf1, "sim_num_condbranch / sim_num_branch");
-  stat_reg_formula(sdb, buf, "The percent of branches that are conditional branches", buf1, NULL);
+  stat_reg_formula(sdb, buf, "The \% of branches that are cond branches", buf1, NULL);
 
   stat_reg_counter(sdb, "num_corr_pred", 
                    "total number of correct predictionss", 

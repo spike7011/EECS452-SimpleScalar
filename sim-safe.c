@@ -167,6 +167,76 @@ static struct bpred_t *pred;
 /* maximum number of inst's to execute */
 static unsigned int max_insts;
 
+struct bpred_t *
+bpred_create(enum bpred_class class)
+{
+  struct bpred_t *pred;
+
+  int flipflop, cnt; 
+  if (!(pred = calloc(1, sizeof(struct bpred_t))))
+    fatal("out of virtual memory");
+
+  pred->class = class;
+
+  switch (class) {
+  case BPred2bit:
+    /* 2 bit predictor */
+    pred->size = 1024;
+    if (!(pred->table =
+          calloc(pred->size, sizeof(unsigned int))))
+      fatal("cannot allocate 2bit storage");
+    /*initiliaze the table*/
+    flipflop = 1;
+    for (cnt = 0; cnt < pred->size; cnt++)
+      {
+        pred->table[cnt] = flipflop;
+        flipflop = 3 - flipflop;
+      }
+    break;
+
+  case BPred1bit: 
+   /* 1 bit predictor */
+    pred->size = 1024;
+    if (!(pred->table =
+          calloc(pred->size, sizeof(unsigned int))))
+      fatal("cannot allocate 1bit storage");
+    /*initiliaze the table*/
+    flipflop = 1;
+    for (cnt = 0; cnt < pred->size; cnt++)
+      {
+        pred->table[cnt] = flipflop;
+        flipflop = 1 - flipflop;
+      }
+    break;
+
+  case BPred3GS1:
+    /* 3-bit pattern based global */
+    pred->size = 8; 
+    if (!(pred->table =
+          calloc(pred->size, sizeof(unsigned int))))
+      fatal("cannot allocate GS1 table storage");
+    if(!(pred->hist =
+          calloc(1, sizeof(unsigned int))))
+      fatal("cannot allocate history table storage");
+    pred->hist[0] = 0; 
+   break; 
+
+  case BPred3GS2:
+    pred->size = 1024*8;
+    if(!(pred->table =
+          calloc(pred->size, sizeof(unsigned int))))
+      fatal("cannot allocate GS2 table storage");
+    if(!(pred->hist =
+          calloc(1024, sizeof(unsigned int))))
+      fatal("cannot allocate history table storage");
+    break; 
+ 
+  default:
+    panic("bogus branch direction predictor class");
+  }
+  return pred; 
+}
+
 /* register simulator-specific options */
 void
 sim_reg_options(struct opt_odb_t *odb)

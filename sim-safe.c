@@ -142,6 +142,28 @@ static counter_t num_corr_pred = 0;
 #define PRED_HASH(ADDR) \
   ((((ADDR) >> 19) ^ ((ADDR) >> MD_BR_SHIFT)) & (1024-1))
 
+/* define pred type */
+static char *pred_type;
+
+/* define pred class */
+enum bpred_class {
+  BPred1bit,
+  BPred2bit,
+  BPred3GS1,
+  BPred3GS2
+};
+
+/* define pred structure */
+struct bpred_t {
+  enum bpred_class class;     /* type of predictor */
+  unsigned int size;          /* number of entries in direct-mapped table */
+  unsigned int *table;        /* prediction state table */
+  unsigned int *hist;         /* history table */
+};
+
+/* branch predictor */
+static struct bpred_t *pred;
+
 /* maximum number of inst's to execute */
 static unsigned int max_insts;
 

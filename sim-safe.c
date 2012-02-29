@@ -406,9 +406,17 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   sprintf(buf, "inst_condbranch_rate");
   sprintf(buf1, "sim_num_condbranch / sim_num_branch");
   stat_reg_formula(sdb, buf, "The percent of branches that are conditional branches", buf1, NULL);
+
+  stat_reg_counter(sdb, "num_corr_pred", 
+                   "total number of correct predictionss", 
+                   &num_corr_pred, 0, NULL); 
+
+  stat_reg_formula(sdb, "pred_rate", 
+                   "the prediction accuracy of current skeme", 
+                   "num_corr_pred / sim_num_condbranch", NULL); 
 		
-  ld_reg_stats(sdb);
-  mem_reg_stats(mem, sdb);
+  //ld_reg_stats(sdb);
+  //mem_reg_stats(mem, sdb);
 }
 
 /* initialize the simulator */

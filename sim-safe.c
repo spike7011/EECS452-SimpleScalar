@@ -431,6 +431,19 @@ sim_init(void)
   /* allocate and initialize memory space */
   mem = mem_create("mem");
   mem_init(mem);
+
+  if (!mystricmp(pred_type, "BPred1bit")){
+      pred = bpred_create(BPred1bit);
+    }
+  if (!mystricmp(pred_type, "BPred2bit")){
+      pred = bpred_create(BPred2bit);
+    }
+  if (!mystricmp(pred_type, "BPred3GS1")){
+      pred = bpred_create(BPred3GS1);
+    }
+  if (!mystricmp(pred_type, "BPred3GS2")){
+      pred = bpred_create(BPred3GS2);
+    }
 }
 
 /* load program into simulated state */

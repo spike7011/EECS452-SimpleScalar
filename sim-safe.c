@@ -360,6 +360,11 @@ sim_reg_options(struct opt_odb_t *odb)
 	       &max_insts, /* default */0,
 	       /* print */TRUE, /* format */NULL);
 
+  /* predition type */
+  opt_reg_string(odb, "-bpred" , "branch predictor type", 
+               &pred_type, "BPred1bit", 
+               TRUE, NULL); 
+
 }
 
 /* check simulator-specific option values */

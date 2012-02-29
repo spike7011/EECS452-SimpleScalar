@@ -1,10 +1,11 @@
+sim-safe: SimpleScalar/Alpha Tool Set version 3.0 of November, 2000.
 Copyright (c) 1994-2000 by Todd M. Austin.  All Rights Reserved.
 This version of SimpleScalar is licensed for academic non-commercial use only.
 
 warning: section `.comment' ignored...
-sim: command line: sim-safe -max:inst 100000000 crafty00.peak.ev6 -pred BPred1bit -redir:sim crafty_1bit.txt 
+sim: command line: sim-safe -max:inst 100000000 -bpred BPred1bit -redir:sim ../../result/crafty_1bit.txt crafty00.peak.ev6 
 
-sim: simulation started @ Tue Feb 28 21:43:53 2012, options follow:
+sim: simulation started @ Tue Feb 28 22:29:07 2012, options follow:
 
 sim-safe: This simulator implements a functional simulator.  This
 functional simulator is the simplest, most user-friendly simulator in the
@@ -21,7 +22,7 @@ rather than speed.
 -seed                       1 # random number generator seed (0 for timer seed)
 # -q                    false # initialize and terminate immediately
 # -chkpt               <null> # restore EIO trace execution from <fname>
-# -redir:sim           <null> # redirect simulator output to file (non-interactive only)
+# -redir:sim     ../../result/crafty_1bit.txt # redirect simulator output to file (non-interactive only)
 # -redir:prog          <null> # redirect simulated program output to file
 -nice                       0 # simulator scheduling priority
 -max:inst           100000000 # maximum number of inst's to execute
@@ -31,12 +32,13 @@ sim: ** starting functional simulation **
 
 sim: ** simulation statistics **
 sim_num_insn              100000000 # total number of instructions executed
-sim_num_refs               36935703 # total number of loads and stores executed
+sim_num_refs               36945733 # total number of loads and stores executed
 sim_elapsed_time                 15 # total simulation time in seconds
 sim_inst_rate          6666666.6667 # simulation speed (in insts/sec)
-sim_num_condbranch          9135555 # total number of conditional branches
-sim_num_branch             11855194 # total number of braches
-inst_branch_rate             0.1186 # The % of inst. that are branches
-inst_condbranch_rate         0.7706 # The % of branches that are cond branches
-num_corr_pred               7362392 # total number of correct predictionss
-pred_rate                    0.8059 # the prediction accuracy of current skeme
+sim_num_condbranch          9128221 # total number of conditional branches
+sim_num_branch             11847324 # total number of braches
+inst_branch_rate             0.1185 # The % of inst. that are branches
+inst_condbranch_rate         0.7705 # The % of branches that are cond branches
+num_corr_pred               7355043 # total number of correct predictionss
+pred_rate                    0.8057 # the prediction accuracy of current skeme
+

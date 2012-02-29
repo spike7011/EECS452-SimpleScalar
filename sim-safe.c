@@ -268,7 +268,7 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   sprintf(buf1, "pred1.dir_hits / pred1.lookups");
   stat_reg_formula(sdb, buf,
       "cond branch direction-prediction rate",
-      buf1, "%9.4f");
+      buf1, "%.4f");
 
 
   sprintf(buf, "pred2.lookups");
@@ -284,7 +284,7 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   sprintf(buf1, "pred2.dir_hits / pred2.lookups");
   stat_reg_formula(sdb, buf,
       "cond branch direction-prediction rate",
-      buf1, "%9.4f");
+      buf1, "%.4f");
 
 
   sprintf(buf, "pred3a.lookups");
@@ -300,7 +300,7 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   sprintf(buf1, "pred3a.dir_hits / pred3a.lookups");
   stat_reg_formula(sdb, buf,
       "cond branch direction-prediction rate",
-      buf1, "%9.4f");
+      buf1, "%.4f");
 
 
   sprintf(buf, "pred3b.lookups");
@@ -316,7 +316,7 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   sprintf(buf1, "pred3b.dir_hits / pred3b.lookups");
   stat_reg_formula(sdb, buf,
       "cond branch direction-prediction rate",
-      buf1, "%9.4f");
+      buf1, "%.4f");
 
   //ld_reg_stats(sdb);
   //mem_reg_stats(mem, sdb);

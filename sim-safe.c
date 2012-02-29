@@ -192,18 +192,18 @@ sim_check_options(struct opt_odb_t *odb, int argc, char **argv)
 
   pred3a = bpred_create(BPred2Level,
     /* bimod table size */0,
-    /* 2lev l1 size */1024,
-    /* 2lev l2 size */8,
+    /* 2lev l1 size */1,
+    /* 2lev l2 size */1024,
     /* meta table size */0,
     /* history reg size */3,
-    /* history xor address */0,
+    /* history xor address */1,
     /* btb sets */512,
     /* btb assoc */4,
     /* ret-addr stack size */8);
 
   pred3b = bpred_create(BPred2Level,
     /* bimod table size */0,
-    /* 2lev l1 size */1,
+    /* 2lev l1 size */1024,
     /* 2lev l2 size */8,
     /* meta table size */0,
     /* history reg size */3,

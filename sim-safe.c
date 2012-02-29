@@ -244,7 +244,7 @@ sim_reg_stats(struct stat_sdb_t *sdb)
 
   sprintf(buf, "inst_condbranch_rate");
   sprintf(buf1, "sim_num_condbranch / sim_num_branch");
-  stat_reg_formula(sdb, buf, "The \% of branches that are conditional branches", buf1, NULL);
+  stat_reg_formula(sdb, buf, "The \% of branches that are cond branches", buf1, NULL);
 		
   //ld_reg_stats(sdb);
   //mem_reg_stats(mem, sdb);

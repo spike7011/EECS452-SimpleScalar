@@ -111,7 +111,6 @@
 #include "dlite.h"
 #include "options.h"
 #include "stats.h"
-#include "bpred.h"
 #include "sim.h"
 
 /*
@@ -139,12 +138,6 @@ static counter_t sim_num_condbranch = 0;
 /* maximum number of inst's to execute */
 static unsigned int max_insts;
 
-/* branch predictor */
-static struct bpred_t *pred1;
-static struct bpred_t *pred2;
-static struct bpred_t *pred3a;
-static struct bpred_t *pred3b;
-
 /* register simulator-specific options */
 void
 sim_reg_options(struct opt_odb_t *odb)
@@ -168,49 +161,7 @@ sim_reg_options(struct opt_odb_t *odb)
 void
 sim_check_options(struct opt_odb_t *odb, int argc, char **argv)
 {
-  pred1 = bpred_create(BPred2Level,
-    /* bimod table size */0,
-    /* 2lev l1 size */1024,
-    /* 2lev l2 size */1,
-    /* meta table size */0,
-    /* history reg size */1,
-    /* history xor address */0,
-    /* btb sets */512,
-    /* btb assoc */4,
-    /* ret-addr stack size */8);
-
-  pred2 = bpred_create(BPred2Level,
-    /* bimod table size */0,
-    /* 2lev l1 size */1024,
-    /* 2lev l2 size */4,
-    /* meta table size */0,
-    /* history reg size */2,
-    /* history xor address */0,
-    /* btb sets */512,
-    /* btb assoc */4,
-    /* ret-addr stack size */8);
-
-  pred3a = bpred_create(BPred2Level,
-    /* bimod table size */0,
-    /* 2lev l1 size */1,
-    /* 2lev l2 size */8,
-    /* meta table size */0,
-    /* history reg size */3,
-    /* history xor address */1,
-    /* btb sets */512,
-    /* btb assoc */4,
-    /* ret-addr stack size */8);
-
-  pred3b = bpred_create(BPred2Level,
-    /* bimod table size */0,
-    /* 2lev l1 size */1024,
-    /* 2lev l2 size */8,
-    /* meta table size */0,
-    /* history reg size */3,
-    /* history xor address */0,
-    /* btb sets */512,
-    /* btb assoc */4,
-    /* ret-addr stack size */8);
+  /* nada */
 }
 
 /* register simulator-specific statistics */
@@ -240,86 +191,14 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   char buf[512], buf1[512];		
   sprintf(buf, "inst_branch_rate");
   sprintf(buf1, "sim_num_branch / sim_num_insn");
-  stat_reg_formula(sdb, buf, "The \% of instructions that are branches", buf1, NULL);
+  stat_reg_formula(sdb, buf, "The percent of instructions that are branches", buf1, NULL);
 
   sprintf(buf, "inst_condbranch_rate");
   sprintf(buf1, "sim_num_condbranch / sim_num_branch");
-  stat_reg_formula(sdb, buf, "The \% of branches that are cond branches", buf1, NULL);
+  stat_reg_formula(sdb, buf, "The percent of branches that are conditional branches", buf1, NULL);
 		
-  //ld_reg_stats(sdb);
-  //mem_reg_stats(mem, sdb);
-
-  //bpred_reg_stats(pred1, sdb);
-  //bpred_reg_stats(pred2, sdb);
-  //bpred_reg_stats(pred3a, sdb);
-  //bpred_reg_stats(pred3b, sdb);
-
-
-  sprintf(buf, "pred1.lookups");
-  stat_reg_counter(sdb, buf, "total number of cond bpred lookups",
-       &pred1->lookups, 0, NULL);
-
-  sprintf(buf, "pred1.dir_hits");
-  stat_reg_counter(sdb, buf, 
-       "total # of direction-predicted hits", 
-       &pred1->dir_hits, 0, NULL);
-
-  sprintf(buf, "pred1.bpred_dir_rate");
-  sprintf(buf1, "pred1.dir_hits / pred1.lookups");
-  stat_reg_formula(sdb, buf,
-      "cond branch direction-prediction rate",
-      buf1, "%12.4f");
-
-
-  sprintf(buf, "pred2.lookups");
-  stat_reg_counter(sdb, buf, "total number of cond bpred lookups",
-       &pred2->lookups, 0, NULL);
-
-  sprintf(buf, "pred2.dir_hits");
-  stat_reg_counter(sdb, buf, 
-       "total # of direction-predicted hits", 
-       &pred2->dir_hits, 0, NULL);
-
-  sprintf(buf, "pred2.bpred_dir_rate");
-  sprintf(buf1, "pred2.dir_hits / pred2.lookups");
-  stat_reg_formula(sdb, buf,
-      "cond branch direction-prediction rate",
-      buf1, "%12.4f");
-
-
-  sprintf(buf, "pred3a.lookups");
-  stat_reg_counter(sdb, buf, "total number of cond bpred lookups",
-       &pred3a->lookups, 0, NULL);
-
-  sprintf(buf, "pred3a.dir_hits");
-  stat_reg_counter(sdb, buf, 
-       "total # of direction-predicted hits", 
-       &pred3a->dir_hits, 0, NULL);
-
-  sprintf(buf, "pred3a.bpred_dir_rate");
-  sprintf(buf1, "pred3a.dir_hits / pred3a.lookups");
-  stat_reg_formula(sdb, buf,
-      "cond branch direction-prediction rate",
-      buf1, "%12.4f");
-
-
-  sprintf(buf, "pred3b.lookups");
-  stat_reg_counter(sdb, buf, "total number of cond bpred lookups",
-       &pred3b->lookups, 0, NULL);
-
-  sprintf(buf, "pred3b.dir_hits");
-  stat_reg_counter(sdb, buf, 
-       "total # of direction-predicted hits", 
-       &pred3b->dir_hits, 0, NULL);
-
-  sprintf(buf, "pred3b.bpred_dir_rate");
-  sprintf(buf1, "pred3b.dir_hits / pred3b.lookups");
-  stat_reg_formula(sdb, buf,
-      "cond branch direction-prediction rate",
-      buf1, "%12.4f");
-
-  //ld_reg_stats(sdb);
-  //mem_reg_stats(mem, sdb);
+  ld_reg_stats(sdb);
+  mem_reg_stats(mem, sdb);
 }
 
 /* initialize the simulator */
@@ -381,10 +260,6 @@ sim_uninit(void)
 
 /* next program counter */
 #define SET_NPC(EXPR)		(regs.regs_NPC = (EXPR))
-
-/* target program counter */
-#undef  SET_TPC
-#define SET_TPC(EXPR)   (target_PC = (EXPR))
 
 /* current program counter */
 #define CPC			(regs.regs_PC)
@@ -460,10 +335,9 @@ void
 sim_main(void)
 {
   md_inst_t inst;
-  register md_addr_t addr, target_PC;
+  register md_addr_t addr;
   enum md_opcode op;
   register int is_write;
-  int stack_idx1, stack_idx2, stack_idx3a, stack_idx3b;
   enum md_fault_type fault;
 
   fprintf(stderr, "sim: ** starting functional simulation **\n");
@@ -545,127 +419,6 @@ sim_main(void)
 	else if(MD_OP_FLAGS(op) & F_UNCOND){
 		sim_num_branch++;
 	}
-
-  if (MD_OP_FLAGS(op) & F_COND){
-    md_addr_t pred_PC1;
-    struct bpred_update_t update_rec1;
-    md_addr_t pred_PC2;
-    struct bpred_update_t update_rec2;
-    md_addr_t pred_PC3a;
-    struct bpred_update_t update_rec3a;
-    md_addr_t pred_PC3b;
-    struct bpred_update_t update_rec3b;
-
-
-    /* get the next predicted fetch address */
-        pred_PC1 = bpred_lookup(pred1,
-             /* branch addr */regs.regs_PC,
-             /* target */target_PC,
-             /* inst opcode */op,
-             /* call? */MD_IS_CALL(op),
-             /* return? */MD_IS_RETURN(op),
-             /* stash an update ptr */&update_rec1,
-             /* stash return stack ptr */&stack_idx1);
-
-    /* get the next predicted fetch address */
-        pred_PC2 = bpred_lookup(pred2,
-             /* branch addr */regs.regs_PC,
-             /* target */target_PC,
-             /* inst opcode */op,
-             /* call? */MD_IS_CALL(op),
-             /* return? */MD_IS_RETURN(op),
-             /* stash an update ptr */&update_rec2,
-             /* stash return stack ptr */&stack_idx2);
-
-    /* get the next predicted fetch address */
-        pred_PC3a = bpred_lookup(pred3a,
-             /* branch addr */regs.regs_PC,
-             /* target */target_PC,
-             /* inst opcode */op,
-             /* call? */MD_IS_CALL(op),
-             /* return? */MD_IS_RETURN(op),
-             /* stash an update ptr */&update_rec3a,
-             /* stash return stack ptr */&stack_idx3a);
-
-    /* get the next predicted fetch address */
-        pred_PC3b = bpred_lookup(pred3b,
-             /* branch addr */regs.regs_PC,
-             /* target */target_PC,
-             /* inst opcode */op,
-             /* call? */MD_IS_CALL(op),
-             /* return? */MD_IS_RETURN(op),
-             /* stash an update ptr */&update_rec3b,
-             /* stash return stack ptr */&stack_idx3b);
-
-    if (!pred_PC1)
-    {
-      /* no predicted taken target, attempt not taken target */
-      pred_PC1 = regs.regs_PC + sizeof(md_inst_t);
-    }
-
-    bpred_update(pred1,
-     /* branch addr */regs.regs_PC,
-     /* resolved branch target */regs.regs_NPC,
-     /* taken? */regs.regs_NPC != (regs.regs_PC +
-           sizeof(md_inst_t)),
-     /* pred taken? */pred_PC1 != (regs.regs_PC +
-          sizeof(md_inst_t)),
-     /* correct pred? */pred_PC1 == regs.regs_NPC,
-     /* opcode */op,
-     /* predictor update pointer */&update_rec1);
-
-    if (!pred_PC2)
-    {
-      /* no predicted taken target, attempt not taken target */
-      pred_PC2 = regs.regs_PC + sizeof(md_inst_t);
-    }
-
-    bpred_update(pred2,
-     /* branch addr */regs.regs_PC,
-     /* resolved branch target */regs.regs_NPC,
-     /* taken? */regs.regs_NPC != (regs.regs_PC +
-           sizeof(md_inst_t)),
-     /* pred taken? */pred_PC2 != (regs.regs_PC +
-          sizeof(md_inst_t)),
-     /* correct pred? */pred_PC2 == regs.regs_NPC,
-     /* opcode */op,
-     /* predictor update pointer */&update_rec2);
-
-    if (!pred_PC3a)
-    {
-      /* no predicted taken target, attempt not taken target */
-      pred_PC3a = regs.regs_PC + sizeof(md_inst_t);
-    }
-
-    bpred_update(pred3a,
-     /* branch addr */regs.regs_PC,
-     /* resolved branch target */regs.regs_NPC,
-     /* taken? */regs.regs_NPC != (regs.regs_PC +
-           sizeof(md_inst_t)),
-     /* pred taken? */pred_PC3a != (regs.regs_PC +
-          sizeof(md_inst_t)),
-     /* correct pred? */pred_PC3a == regs.regs_NPC,
-     /* opcode */op,
-     /* predictor update pointer */&update_rec3a);
-
-    if (!pred_PC3b)
-    {
-      /* no predicted taken target, attempt not taken target */
-      pred_PC3b = regs.regs_PC + sizeof(md_inst_t);
-    }
-
-    bpred_update(pred3b,
-     /* branch addr */regs.regs_PC,
-     /* resolved branch target */regs.regs_NPC,
-     /* taken? */regs.regs_NPC != (regs.regs_PC +
-           sizeof(md_inst_t)),
-     /* pred taken? */pred_PC3b != (regs.regs_PC +
-          sizeof(md_inst_t)),
-     /* correct pred? */pred_PC3b == regs.regs_NPC,
-     /* opcode */op,
-     /* predictor update pointer */&update_rec3b);
-    
-  }
 
       /* check for DLite debugger entry condition */
       if (dlite_check_break(regs.regs_NPC,

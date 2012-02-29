@@ -275,6 +275,74 @@ bpred_dir_lookup(struct bpred_t *pred, md_addr_t baddr)
   panic("bogus branch predictor class"); 
 }
 
+void
+bpred_update(struct bpred_t *pred, md_addr_t baddr, int taken, int pred_taken)  
+{
+  if(!!pred_taken == !!taken)
+    num_corr_pred ++; 
+  int index = 0; 
+ 
+  switch(pred->class) {
+
+    case BPred2bit: 
+    {
+      int temp = PRED_HASH(baddr); 
+      if (taken) 
+      {
+        if (pred->table[temp] < 3) pred->table[temp]++; 
+      }
+      else if ( pred->table[temp] > 1) 
+        pred->table[temp]--; 
+      break; 
+    }
+    case BPred1bit: 
+    {
+      if (taken) pred->table[PRED_HASH(baddr)] = 1; 
+      else pred->table[PRED_HASH(baddr)] = 0; 
+      break; 
+    }
+    case BPred3GS1: 
+    {
+      index = pred->hist[0]; 
+      if (taken) 
+      {
+        if (pred->table[index] < 1) pred->table[index]++;
+        pred->hist[0] = (index<<1+1) & 7;
+      } 
+      else
+      {
+        if( pred->table[index] > 0)
+          pred->table[index]--;
+        pred->hist[0] = (index<<1) & 7; 
+      }
+      break; 
+    }
+    case BPred3GS2:
+    {
+      int temp = PRED_HASH(baddr); 
+      int index = pred->hist[temp]; 
+      if (taken)
+      {
+        if (pred->table[temp*8+index] < 1) 
+          pred->table[temp*8+index]++;
+        index = index << 1; 
+        index ++; 
+        index = index & 7; 
+        pred->hist[temp] = index;       
+      }
+      else 
+      {
+        if( pred->table[temp*8+index] > 0)
+          pred->table[temp*8+index]--;
+        index = index << 1; 
+        index = index & 7; 
+        pred->hist[temp] = index;
+      }
+      break; 
+    }
+  }
+}
+
 /* register simulator-specific options */
 void
 sim_reg_options(struct opt_odb_t *odb)
